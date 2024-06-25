@@ -1,0 +1,71 @@
+<link rel="stylesheet" media="all" href="style.css">
+<div class="center">
+    <canvas id="screen">
+
+    </canvas>
+
+    <div class="subPanel">
+        <input type="text" id="textbox" value="ABCD">
+        <button OnClick="Go()">Go</button><br />
+        <div id="debugText"></div>
+        <div id="debugText2"></div>
+    </div>
+</div>
+<script src="vector.js"></script>
+<script src="helper.js"></script>
+<script src="gene.js"></script>
+<script src="simulation.js"></script>
+<script src="nature.js"></script>
+<script>
+    function Go() {
+        let tb = document.getElementById('textbox');
+
+        debugElement = simulation.AddAnimalFromGene(tb.value);
+        tb.value = GeneString.RandomGenes(20);
+    }
+
+    function debugEntity(element) {
+        let out = document.getElementById('debugText');
+        out.innerText = JSON.stringify(element, null, "\t");
+    }
+
+    function PrintDebug() {
+        if (debugElement != null)
+            debugEntity(debugElement);
+
+        let out = document.getElementById('debugText2');
+        out.innerHTML = simulation.entities.filter(o => o instanceof Animal)
+            .map(o => o.Genes.toString())
+            .filter((o, i, self) => self.indexOf(o) === i)
+            .join("<br/>");
+    }
+
+    const canvas = document.getElementById('screen');
+    const simulation = new NatureSimulation(canvas, 800, 800);
+    simulation.DebugEvent = PrintDebug;
+    let elemLeft = canvas.offsetLeft + canvas.clientLeft;
+    let elemTop = canvas.offsetTop + canvas.clientTop;
+    let debugElement = null;
+
+    let tb = document.getElementById('textbox');
+    tb.value = GeneString.RandomGenes(10);
+
+    // Add event listener for `click` events.
+    canvas.addEventListener('click', function(event) {
+        var x = event.pageX - elemLeft,
+            y = event.pageY - elemTop;
+
+        // Collision detection between clicked offset and element.
+        simulation.entities.forEach(function(element) {
+            if (y > element.position.y - 50 && y < element.position.y + 50 &&
+                x > element.position.x - 50 && x < element.position.x + 50) {
+                debugElement = element;
+            }
+        });
+
+    }, false);
+
+    simulation.Setup();
+
+    simulation.Start();
+</script>

@@ -1,0 +1,8 @@
+#canvas1 {
+    border: 1px solid #d3d3d3;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    background-color: rgb(53, 53, 53);
+  }
